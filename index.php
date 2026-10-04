@@ -104,11 +104,8 @@ $title ="Beranda - Perpustakaan Immanuel1";
       </div>
     </div>
   </section>
-  <footer class="site-footer">
-    <span>&copy; 2026 Perpustakaan Digital - SMK Kristen Immanuel Pontianak</span>
-    <span>Dibangun dengan HTML, CSS &amp; PHP</span>
-  </footer>
-  <?php require_once './components/landing/footer.php' ?>
+  
+  <?php require_once './components/landing/footer.php'; ?>
 
 </body>
 
