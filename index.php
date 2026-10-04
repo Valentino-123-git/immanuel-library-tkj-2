@@ -1,10 +1,17 @@
+<?php
+$title ="Beranda - Perpustakaan Immanuel1";
+?>
+
 <!DOCTYPE html>
 <html lang="id">
-
+ 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Beranda - Perpustakaan Digital</title>
+  <title>
+    <?= $title ?>
+
+  </title>
   <link rel="stylesheet" href="styles/index.css">
 </head>
 
@@ -26,6 +33,7 @@
       </div>
     </nav>
   </header>
+  <?php require_once './components/landing/header.php' ?>
 
   <!-- ============ HERO ============ -->
   <section class="hero">
@@ -116,6 +124,8 @@
     <span>&copy; 2026 Perpustakaan Digital - SMK Kristen Immanuel Pontianak</span>
     <span>Dibangun dengan HTML, CSS &amp; PHP</span>
   </footer>
+  <?php require_once './components/landing/footer.php' ?>
+
 </body>
 
 </html>
