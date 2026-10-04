@@ -1,0 +1,13 @@
+<?php
+session_start();
+
+// Menghapus semua variabel session
+session_unset();
+
+// Menghancurkan session pengguna
+session_destroy();
+
+// Mengalihkan halaman kembali ke landing page (index.php)
+header("Location: ../../index.php");
+exit();
+?>
