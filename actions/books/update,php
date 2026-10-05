@@ -1,6 +1,32 @@
 <?php
 session_start();
-// Logika mengedit buku
+require_once "../../config/database.php";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id          = $_POST['id'] ?? null;
+    $title       = trim($_POST['title'] ?? '');
+    $author_id   = $_POST['author_id'] ?? null;
+    $category_id = $_POST['category_id'] ?? null;
+    $stock       = $_POST['stock'] ?? 0;
+
+    if (!$id || empty($title)) {
+        $_SESSION['error'] = "Data tidak valid atau judul kosong!";
+        header("Location: ../../pages/books/edit.php?id=" . $id);
+        exit();
+    }
+
+    $stmt = $conn->prepare("UPDATE books SET title = ?, author_id = ?, category_id = ?, stock = ? WHERE id = ?");
+    $stmt->bind_param("siiii", $title, $author_id, $category_id, $stock, $id);
+
+    if ($stmt->execute()) {
+        $_SESSION['success'] = "Data buku berhasil diperbarui!";
+    } else {
+        $_SESSION['error'] = "Gagal memperbarui data buku: " . $conn->error;
+    }
+
+    $stmt->close();
+}
+
 header("Location: ../../pages/books/index.php");
 exit();
 ?>
