@@ -1,6 +1,12 @@
 <?php
-require_once "../../config/auth.php";
-require_once "../../config/database.php";
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Gunakan __DIR__ . '/../' agar jalurnya pas naik 1 folder ke config
+require_once __DIR__ . '/../config/auth.php';
+require_once __DIR__ . '/../config/database.php';
+?>
 
 // 1. Hitung Total Buku
 $total_books = $conn->query("SELECT COUNT(*) AS total FROM books")->fetch_assoc()['total'] ?? 0;
