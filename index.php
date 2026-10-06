@@ -1,5 +1,13 @@
 <?php
-$title ="Beranda - Perpustakaan Immanuel1";
+session_start();
+
+// Jika pengguna SUDAH login, langsung arahkan ke Dashboard
+if (isset($_SESSION['is_login']) && $_SESSION['is_login'] === true) {
+    header("Location: pages/dashboard.php");
+    exit();
+}
+
+$title = "Beranda - Perpustakaan Immanuel1";
 ?>
 
 <!DOCTYPE html>
