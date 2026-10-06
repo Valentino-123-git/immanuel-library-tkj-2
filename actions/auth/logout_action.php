@@ -1,20 +1,9 @@
 <?php
 session_start();
-
-// Hapus seluruh data sesi
-$_SESSION = array();
-
-if (ini_get("session.use_cookies")) {
-    $params = session_get_cookie_params();
-    setcookie(session_name(), '', time() - 42000,
-        $params["path"], $params["domain"],
-        $params["secure"], $params["httponly"]
-    );
-}
-
+session_unset();
 session_destroy();
 
-// Pindah ke halaman utama / login
-header("Location: ../../index.php");
+// Pakai jalur utama proyek biar dijamin pasti ketemu
+header("Location: /immanuel-library/index.php");
 exit();
 ?>

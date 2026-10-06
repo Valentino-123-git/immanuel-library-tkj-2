@@ -44,7 +44,7 @@ $total_fines = safe_query_count($conn, "SELECT SUM(fine) AS total FROM loans WHE
 <div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Selamat Datang, <?= htmlspecialchars($_SESSION['user_name']); ?>! 👋</h2>
-        <a href="../../actions/auth/logout.php" class="btn btn-danger">Logout</a>
+        <a href="../actions/auth/logout_action.php" class="btn btn-danger">Logout</a>
     </div>
 
     <!-- Alert Notifikasi Session -->
