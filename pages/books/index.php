@@ -1,17 +1,8 @@
 <?php
-$pageTitle = "Manajemen Buku";
-$pageSubtitle = "Kelola koleksi buku perpustakaan";
+require_once "../../includes/header.php";
+require_once "../../includes/navbar.php";
 ?>
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?php echo $pageTitle; ?> - Perpustakaan Digital</title>
-  <link rel="stylesheet" href="../../styles/books/index.css">
-</head>
-
+<div class="container my-4">
 <body>
   <?php
   $book = [
@@ -100,6 +91,8 @@ $pageSubtitle = "Kelola koleksi buku perpustakaan";
       </div>
     </main>
   </div>
+  </div>
+ <?php require_once "../../includes/footer.php"; ?>
 </body>
 
 </html>
