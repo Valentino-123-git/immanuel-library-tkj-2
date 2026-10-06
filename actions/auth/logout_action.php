@@ -3,7 +3,11 @@ session_start();
 session_unset();
 session_destroy();
 
-// Pakai jalur utama proyek biar dijamin pasti ketemu
-header("Location: /immanuel-library/index.php");
+// Otomatis mengarahkan ke pages/login.php jika ada, atau ke index.php
+if (file_exists(__DIR__ . '/../../pages/login.php')) {
+    header("Location: ../../pages/login.php");
+} else {
+    header("Location: ../../index.php");
+}
 exit();
 ?>
