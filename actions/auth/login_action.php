@@ -1,9 +1,14 @@
 <?php
-session_start();
-require_once __DIR__ . "/../../config/database.php";
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Mengunci jalur folder secara absolut dari lokasi file ini
+require_once __DIR__ . '/../../config/database.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email    = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
+    $password = trim($_POST['password'] ?? '');
 
     if (empty($email) || empty($password)) {
         $_SESSION['error'] = "Email dan password wajib diisi!";
@@ -11,24 +16,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $stmt = $conn->prepare("SELECT id, name, email, password, role FROM users WHERE email = ?");
+    // Cari pengguna berdasarkan email
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? LIMIT 1");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    if ($result->num_rows === 1) {
+    if ($result && $result->num_rows === 1) {
         $user = $result->fetch_assoc();
 
-        // Verifikasi password hash
-        if (password_verify($password, $user['password'])) {
-            // Simpan data login ke session
+        // Cek password (mendukung hash password_verify maupun plain text)
+        if (password_verify($password, $user['password']) || $password === $user['password']) {
+            $_SESSION['is_login']  = true;
             $_SESSION['user_id']   = $user['id'];
             $_SESSION['user_name'] = $user['name'];
-            $_SESSION['user_role'] = $user['role'];
-            $_SESSION['is_login']   = true;
+            $_SESSION['role']      = $user['role'] ?? 'user';
 
-            $_SESSION['success'] = "Selamat datang kembali, " . $user['name'] . "!";
-            header("Location: ../../index.php"); // Atau ke pages/dashboard.php
+            header("Location: ../../pages/dashboard.php");
             exit();
         }
     }
@@ -36,5 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['error'] = "Email atau password salah!";
     header("Location: ../../pages/auth/login.php");
     exit();
+} else {
+    header("Location: ../../pages/auth/login.php");
+    exit();
 }
-?>
