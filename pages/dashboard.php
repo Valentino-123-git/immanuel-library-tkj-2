@@ -3,26 +3,27 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Gunakan __DIR__ . '/../' agar jalurnya pas naik 1 folder ke config
 require_once __DIR__ . '/../config/auth.php';
 require_once __DIR__ . '/../config/database.php';
-?>
 
 // 1. Hitung Total Buku
-$total_books = $conn->query("SELECT COUNT(*) AS total FROM books")->fetch_assoc()['total'] ?? 0;
+$res_books = $conn->query("SELECT COUNT(*) AS total FROM books");
+$total_books = ($res_books) ? $res_books->fetch_assoc()['total'] : 0;
 
 // 2. Hitung Total Anggota/User
-$total_users = $conn->query("SELECT COUNT(*) AS total FROM users WHERE role = 'member'")->fetch_assoc()['total'] ?? 0;
+$res_users = $conn->query("SELECT COUNT(*) AS total FROM users WHERE role = 'user' OR role = 'member'");
+$total_users = ($res_users) ? $res_users->fetch_assoc()['total'] : 0;
 
 // 3. Hitung Peminjaman Aktif (Belum Kembali)
-$active_loans = $conn->query("SELECT COUNT(*) AS total FROM loans WHERE status = 'borrowed'")->fetch_assoc()['total'] ?? 0;
+$res_loans = $conn->query("SELECT COUNT(*) AS total FROM loans WHERE status = 'borrowed'");
+$active_loans = ($res_loans) ? $res_loans->fetch_assoc()['total'] : 0;
 
 // 4. Hitung Total Denda Terkumpul
-$total_fines = $conn->query("SELECT SUM(fine) AS total FROM loans WHERE status = 'returned'")->fetch_assoc()['total'] ?? 0;
+$res_fines = $conn->query("SELECT SUM(fine) AS total FROM loans WHERE status = 'returned'");
+$row_fines = ($res_fines) ? $res_fines->fetch_assoc() : null;
+$total_fines = $row_fines['total'] ?? 0;
 ?>
 
-<!DOCTYPE html>
-<html lang="id">
 <head>
     <meta charset="UTF-8">
     <title>Dashboard - Immanuel Library</title>
