@@ -6,22 +6,31 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../config/auth.php';
 require_once __DIR__ . '/../config/database.php';
 
+// Fungsi penanganan query agar web TIDAK AKAN PERNAH Fatal Error jika data/tabel kosong
+function safe_query_count($conn, $query) {
+    try {
+        $res = $conn->query($query);
+        if ($res) {
+            $row = $res->fetch_assoc();
+            return $row['total'] ?? 0;
+        }
+    } catch (Throwable $e) {
+        return 0; // Jika tabel belum ada / error, otomatis mengembalikan angka 0
+    }
+    return 0;
+}
+
 // 1. Hitung Total Buku
-$res_books = $conn->query("SELECT COUNT(*) AS total FROM books");
-$total_books = ($res_books) ? $res_books->fetch_assoc()['total'] : 0;
+$total_books = safe_query_count($conn, "SELECT COUNT(*) AS total FROM books");
 
 // 2. Hitung Total Anggota/User
-$res_users = $conn->query("SELECT COUNT(*) AS total FROM users WHERE role = 'user' OR role = 'member'");
-$total_users = ($res_users) ? $res_users->fetch_assoc()['total'] : 0;
+$total_users = safe_query_count($conn, "SELECT COUNT(*) AS total FROM users WHERE role = 'user' OR role = 'member'");
 
 // 3. Hitung Peminjaman Aktif (Belum Kembali)
-$res_loans = $conn->query("SELECT COUNT(*) AS total FROM loans WHERE status = 'borrowed'");
-$active_loans = ($res_loans) ? $res_loans->fetch_assoc()['total'] : 0;
+$active_loans = safe_query_count($conn, "SELECT COUNT(*) AS total FROM loans WHERE status = 'borrowed'");
 
 // 4. Hitung Total Denda Terkumpul
-$res_fines = $conn->query("SELECT SUM(fine) AS total FROM loans WHERE status = 'returned'");
-$row_fines = ($res_fines) ? $res_fines->fetch_assoc() : null;
-$total_fines = $row_fines['total'] ?? 0;
+$total_fines = safe_query_count($conn, "SELECT SUM(fine) AS total FROM loans WHERE status = 'returned'");
 ?>
 
 <head>
