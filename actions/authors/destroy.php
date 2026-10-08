@@ -2,28 +2,22 @@
 session_start();
 require_once "../../config/database.php";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    $bio  = trim($_POST['bio'] ?? '');
+$id = $_GET['id'] ?? null;
 
-    // Validasi input
-    if (empty($name)) {
-        $_SESSION['error'] = "Nama penulis tidak boleh kosong!";
-        header("Location: ../../pages/authors/create.php");
-        exit();
-    }
-
-    // Query simpan data aman dari SQL Injection
-    $stmt = $conn->prepare("INSERT INTO authors (name, bio) VALUES (?, ?)");
-    $stmt->bind_param("ss", $name, $bio);
+if ($id) {
+    // Query hapus data
+    $stmt = $conn->prepare("DELETE FROM authors WHERE id = ?");
+    $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        $_SESSION['success'] = "Penulis berhasil ditambahkan!";
+        $_SESSION['success'] = "Penulis berhasil dihapus!";
     } else {
-        $_SESSION['error'] = "Gagal menyimpan data: " . $conn->error;
+        $_SESSION['error'] = "Gagal menghapus data: " . $conn->error;
     }
 
     $stmt->close();
+} else {
+    $_SESSION['error'] = "ID penulis tidak valid!";
 }
 
 header("Location: ../../pages/authors/index.php");

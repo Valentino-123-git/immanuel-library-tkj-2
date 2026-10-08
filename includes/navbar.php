@@ -15,7 +15,7 @@
       </ul>
       <div class="d-flex align-items-center text-white gap-3">
         <span>Halo, <b><?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></b></span>
-        <a href="../../actions/auth/logout.php" class="btn btn-outline-danger btn-sm">Logout</a>
+        <a href="../../actions/auth/logout_action.php" class="btn btn-outline-danger btn-sm">Logout</a>
       </div>
     </div>
   </div>
