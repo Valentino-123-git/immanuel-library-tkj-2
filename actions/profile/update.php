@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     $user_id  = $_SESSION['user_id'];
     $name     = trim($_POST['name'] ?? '');
     $email    = trim($_POST['email'] ?? '');

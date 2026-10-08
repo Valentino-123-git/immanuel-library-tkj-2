@@ -43,7 +43,7 @@ $user    = $stmt->get_result()->fetch_assoc();
                     <input type="password" name="password" id="password" class="form-control" placeholder="••••••••">
                 </div>
                 <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                    <button type="submit" name="submit" class="btn btn-primary">Simpan Perubahan</button>
                 </div>
             </form>
         </div>
