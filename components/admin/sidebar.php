@@ -1,42 +1,17 @@
-<aside class="sidebar">
-    <div class="sidebar-brand">
-        <a href="../../index.php">
-            <i class="fas fa-book-reader"></i>
-            <span>Immanuel Library</span>
-        </a>
+<?php
+// Tentukan menu aktif dari nama folder halaman saat ini (books, categories, dst.)
+$currentSection = basename(dirname($_SERVER['SCRIPT_NAME']));
+?>
+<aside class="app-sidebar">
+    <div class="brand">
+        <span class="logo-badge">IL</span>
+        <span>Immanuel Library</span>
     </div>
-    <nav class="sidebar-menu">
-        <ul>
-            <li>
-                <a href="../../pages/books/index.php">
-                    <i class="fas fa-book"></i>
-                    <span>Manajemen Buku</span>
-                </a>
-            </li>
-            <li>
-                <a href="../../pages/categories/index.php">
-                    <i class="fas fa-tags"></i>
-                    <span>Manajemen Kategori</span>
-                </a>
-            </li>
-            <li>
-                <a href="../../pages/authors/index.php">
-                    <i class="fas fa-user-edit"></i>
-                    <span>Manajemen Penulis</span>
-                </a>
-            </li>
-            <li>
-                <a href="../../pages/users/index.php">
-                    <i class="fas fa-users"></i>
-                    <span>Manajemen Pengguna</span>
-                </a>
-            </li>
-            <li>
-                <a href="../../pages/profile/edit.php">
-                    <i class="fas fa-user-cog"></i>
-                    <span>Profil Saya</span>
-                </a>
-            </li>
-        </ul>
+    <nav>
+        <a href="../../pages/books/index.php" class="<?= $currentSection === 'books' ? 'active' : '' ?>">Manajemen Buku</a>
+        <a href="../../pages/categories/index.php" class="<?= $currentSection === 'categories' ? 'active' : '' ?>">Manajemen Kategori</a>
+        <a href="../../pages/authors/index.php" class="<?= $currentSection === 'authors' ? 'active' : '' ?>">Manajemen Penulis</a>
+        <a href="../../pages/users/index.php" class="<?= $currentSection === 'users' ? 'active' : '' ?>">Manajemen Pengguna</a>
+        <a href="../../pages/profile/edit.php" class="<?= $currentSection === 'profile' ? 'active' : '' ?>">Profil Saya</a>
     </nav>
 </aside>

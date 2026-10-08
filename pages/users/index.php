@@ -25,9 +25,9 @@ if ($search !== '') {
 <body>
   <div class="app-shell">
    <?php require_once '../../components/admin/sidebar.php'; ?>
-   <?php require_once '../../components/admin/topbar.php'; ?>
 
     <main class="app-main">
+      <?php require_once '../../components/admin/topbar.php'; ?>
 
       <div class="app-content">
         <div class="toolbar">

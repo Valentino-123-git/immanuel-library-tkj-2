@@ -13,13 +13,12 @@ $pageSubtitle = "Kelola data sistem perpustakaan";
 <body>
   <div class="app-shell">
    <?php require_once '../../components/admin/sidebar.php'; ?>
-   <?php require_once '../../components/admin/topbar.php'; ?>
 
     <main class="app-main">
-    
+      <?php require_once '../../components/admin/topbar.php'; ?>
 
       <div class="app-content">
-        <form method="" action="">
+        <form method="POST" action="../../actions/authors/store.php">
           <div class="form-card">
             <div class="form-section-title">Data Penulis</div>
             <div class="form-group">
@@ -32,7 +31,7 @@ $pageSubtitle = "Kelola data sistem perpustakaan";
             </div>
             <div class="form-actions">
               <a href="index.php" class="btn btn-outline">Batal</a>
-              <button type="submit" class="btn btn-primary">Simpan Penulis</button>
+              <button type="submit" name="submit" class="btn btn-primary">Simpan Penulis</button>
             </div>
           </div>
         </form>
