@@ -1,6 +1,14 @@
 <?php
+require_once '../../repositories/user-repository.php';
+
 $pageTitle = "Edit Pengguna";
 $pageSubtitle = "Kelola data sistem perpustakaan";
+
+$user = getUser($_GET['id'] ?? 0);
+if (!$user) {
+  header("Location: index.php");
+  exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -11,33 +19,25 @@ $pageSubtitle = "Kelola data sistem perpustakaan";
   <link rel="stylesheet" href="../../styles/users/edit.css">
 </head>
 <body>
-  <?php
-  $user = [
-      "id"    => 2,
-      "name"  => "Budi Santoso",
-      "email" => "budi.santoso@siswa.ski.sch.id",
-      "role"  => "member",
-  ];
-  ?>
   <div class="app-shell">
    <?php require_once '../../components/admin/sidebar.php'; ?>
    <?php require_once '../../components/admin/topbar.php'; ?>
 
     <main class="app-main">
-    
+
       <div class="app-content">
-        <form method="" action="">
+        <form method="POST" action="../../actions/users/update.php">
           <input type="hidden" name="id" value="<?= $user['id'] ?>">
           <div class="form-card">
             <div class="form-section-title">Data Pengguna</div>
             <div class="form-row">
               <div class="form-group">
                 <label for="name">Nama Lengkap</label>
-                <input type="text" id="name" name="name" value="<?= $user['name'] ?>">
+                <input type="text" id="name" name="name" value="<?= htmlspecialchars($user['name']) ?>">
               </div>
               <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="<?= $user['email'] ?>">
+                <input type="email" id="email" name="email" value="<?= htmlspecialchars($user['email']) ?>">
               </div>
             </div>
             <div class="form-group">
@@ -50,7 +50,7 @@ $pageSubtitle = "Kelola data sistem perpustakaan";
 
             <div class="form-actions">
               <a href="index.php" class="btn btn-outline">Batal</a>
-              <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+              <button type="submit" name="submit" class="btn btn-primary">Simpan Perubahan</button>
             </div>
           </div>
         </form>

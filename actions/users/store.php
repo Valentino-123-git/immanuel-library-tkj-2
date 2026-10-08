@@ -2,7 +2,7 @@
 session_start();
 require_once "../../config/database.php";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     $name     = trim($_POST['name'] ?? '');
     $email    = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
