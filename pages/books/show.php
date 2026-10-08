@@ -1,6 +1,14 @@
 <?php
+require_once '../../repositories/book-repository.php';
+
 $pageTitle = "Detail Buku";
 $pageSubtitle = "Kelola data sistem perpustakaan";
+
+$book = getBook($_GET['id'] ?? 0);
+if (!$book) {
+  header("Location: index.php");
+  exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -11,9 +19,6 @@ $pageSubtitle = "Kelola data sistem perpustakaan";
   <link rel="stylesheet" href="../../styles/books/show.css">
 </head>
 <body>
-  <?php
-  require '../../repositories/book-repository.php';
-  ?>
   <div class="app-shell">
   <?php require_once '../../components/admin/sidebar.php'; ?>
   <?php require_once '../../components/admin/topbar.php'; ?>
@@ -24,19 +29,19 @@ $pageSubtitle = "Kelola data sistem perpustakaan";
         <div class="detail-grid">
           <div class="detail-cover"><svg class="icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg></div>
           <div class="detail-card">
-            <h1><?= $book['title'] ?></h1>
-            <p class="detail-meta">ISBN: <?= $book['isbn'] ?> &middot; Terbit <?= $book['year'] ?></p>
+            <h1><?= htmlspecialchars($book['title']) ?></h1>
+            <p class="detail-meta">ISBN: <?= htmlspecialchars($book['isbn']) ?> &middot; Terbit <?= $book['year'] ?></p>
 
             <div class="detail-row">
               <div class="detail-label">Kategori</div>
-              <div class="detail-value"><span class="badge badge-muted"><?= $book['category'] ?></span></div>
+              <div class="detail-value"><span class="badge badge-muted"><?= htmlspecialchars($book['category']) ?></span></div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Penulis</div>
               <div class="detail-value">
                 <div class="chip-list">
                   <?php foreach ($book['authors'] as $authorName): ?>
-                    <span class="chip"><?= $authorName ?></span>
+                    <span class="chip"><?= htmlspecialchars($authorName) ?></span>
                   <?php endforeach; ?>
                 </div>
               </div>
@@ -47,7 +52,7 @@ $pageSubtitle = "Kelola data sistem perpustakaan";
             </div>
             <div class="detail-row">
               <div class="detail-label">Deskripsi</div>
-              <div class="detail-value"><?= $book['description'] ?></div>
+              <div class="detail-value"><?= htmlspecialchars($book['description']) ?></div>
             </div>
 
             <div class="form-actions" style="border-top:none; padding-top:6px;">

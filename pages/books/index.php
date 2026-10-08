@@ -1,42 +1,58 @@
 <?php
-require_once "../../includes/header.php";
-require_once "../../includes/navbar.php";
+require_once '../../repositories/book-repository.php';
+require_once '../../repositories/category-repository.php';
+
+$pageTitle = "Manajemen Buku";
+$pageSubtitle = "Kelola data sistem perpustakaan";
+
+$books = getBooks();
+$categories = getCategories();
+
+// Filter pencarian judul dan kategori
+$search = trim($_GET['search'] ?? '');
+$categoryFilter = $_GET['category'] ?? '';
+
+$books = array_filter($books, function ($b) use ($search, $categoryFilter) {
+  if ($search !== '' && stripos($b['title'], $search) === false) {
+    return false;
+  }
+  if ($categoryFilter !== '' && $b['category'] !== $categoryFilter) {
+    return false;
+  }
+  return true;
+});
 ?>
-<div class="container my-4">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><?php echo $pageTitle; ?> - Perpustakaan Digital</title>
+  <link rel="stylesheet" href="../../styles/books/index.css">
+</head>
 <body>
-  <?php
-  $book = [
-    "id" => 1,
-    "title" => "Laskar Pelangi",
-    "category" => "Fiksi",
-    "year" => 2005,
-    "stock" => 12,
-    "authors" => "Andrea Hirata",
-  ];
-  ?>
-<div class="app-shell"></div>
- <?php require_once '../../components/admin/sidebar.php'; ?>
- <?php require_once '../../components/admin/topbar.php'; ?>
+  <div class="app-shell">
+    <?php require_once '../../components/admin/sidebar.php'; ?>
+    <?php require_once '../../components/admin/topbar.php'; ?>
 
     <main class="app-main">
 
       <div class="app-content">
         <div class="toolbar">
-          <form method="" action="" class="toolbar-filters">
+          <form method="GET" action="" class="toolbar-filters">
             <div class="search-box">
               <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="7" />
                 <path d="m21 21-4.3-4.3" />
               </svg>
-              <input type="text" name="search" class="search-input" placeholder="Cari judul buku...">
+              <input type="text" name="search" class="search-input" placeholder="Cari judul buku..." value="<?= htmlspecialchars($search) ?>">
             </div>
             <select name="category" class="filter-select">
               <option value="">Semua Kategori</option>
-              <option value="Fiksi">Fiksi</option>
-              <option value="Sains">Sains</option>
-              <option value="Sejarah">Sejarah</option>
-              <option value="Teknologi">Teknologi</option>
+              <?php foreach ($categories as $category): ?>
+                <option value="<?= htmlspecialchars($category['name']) ?>" <?= $categoryFilter === $category['name'] ? 'selected' : '' ?>><?= htmlspecialchars($category['name']) ?></option>
+              <?php endforeach; ?>
             </select>
             <button type="submit" class="btn btn-outline btn-sm">Cari</button>
           </form>
@@ -55,6 +71,7 @@ require_once "../../includes/navbar.php";
               </tr>
             </thead>
             <tbody>
+              <?php foreach ($books as $book): ?>
               <tr>
                 <td>
                   <div class="cell-primary">
@@ -63,23 +80,29 @@ require_once "../../includes/navbar.php";
                         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
                       </svg></span>
-                    <a href="show.php?id=<?= $book['id'] ?>" style="color:inherit;"><?= $book['title'] ?></a>
+                    <a href="show.php?id=<?= $book['id'] ?>" style="color:inherit;"><?= htmlspecialchars($book['title']) ?></a>
                   </div>
                 </td>
-                <td><span class="badge badge-muted"><?= $book['category'] ?></span></td>
+                <td><span class="badge badge-muted"><?= htmlspecialchars($book['category']) ?></span></td>
                 <td>
                   <div class="chip-list">
-                    <span class="chip"><?= $book['authors'] ?></span>
+                    <?php foreach ($book['authors'] as $authorName): ?>
+                      <span class="chip"><?= htmlspecialchars($authorName) ?></span>
+                    <?php endforeach; ?>
                   </div>
                 </td>
                 <td><?= $book['stock'] ?></td>
                 <td>
                   <div class="cell-actions">
                     <a href="edit.php?id=<?= $book['id'] ?>" class="btn btn-outline btn-sm">Edit</a>
-                    <a href="#" class="btn btn-danger btn-sm">Hapus</a>
+                    <a href="../../actions/books/destroy.php?id=<?= $book['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus buku ini?')">Hapus</a>
                   </div>
                 </td>
               </tr>
+              <?php endforeach; ?>
+              <?php if (empty($books)): ?>
+              <tr><td colspan="5">Data buku tidak ditemukan.</td></tr>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>
@@ -91,8 +114,5 @@ require_once "../../includes/navbar.php";
       </div>
     </main>
   </div>
-  </div>
- <?php require_once "../../includes/footer.php"; ?>
 </body>
-
 </html>
