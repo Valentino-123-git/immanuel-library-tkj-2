@@ -2,26 +2,21 @@
 session_start();
 require_once "../../config/database.php";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id   = $_POST['id'] ?? null;
-    $name = trim($_POST['name'] ?? '');
+$id = $_GET['id'] ?? null;
 
-    if (!$id || empty($name)) {
-        $_SESSION['error'] = "Data tidak valid atau nama kategori kosong!";
-        header("Location: ../../pages/categories/edit.php?id=" . $id);
-        exit();
-    }
-
-    $stmt = $conn->prepare("UPDATE categories SET name = ? WHERE id = ?");
-    $stmt->bind_param("si", $name, $id);
+if ($id) {
+    $stmt = $conn->prepare("DELETE FROM categories WHERE id = ?");
+    $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        $_SESSION['success'] = "Kategori berhasil diperbarui!";
+        $_SESSION['success'] = "Kategori berhasil dihapus!";
     } else {
-        $_SESSION['error'] = "Gagal memperbarui kategori: " . $conn->error;
+        $_SESSION['error'] = "Gagal menghapus kategori: " . $conn->error;
     }
 
     $stmt->close();
+} else {
+    $_SESSION['error'] = "ID kategori tidak valid!";
 }
 
 header("Location: ../../pages/categories/index.php");

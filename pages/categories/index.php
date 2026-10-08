@@ -1,6 +1,18 @@
 <?php
+require_once '../../repositories/category-repository.php';
+
 $pageTitle = "Manajemen Kategori";
 $pageSubtitle = "Kelola data sistem perpustakaan";
+
+$categories = getCategories();
+
+// Filter pencarian berdasarkan nama kategori
+$search = trim($_GET['search'] ?? '');
+if ($search !== '') {
+    $categories = array_filter($categories, function ($c) use ($search) {
+        return stripos($c['name'], $search) !== false;
+    });
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -11,22 +23,18 @@ $pageSubtitle = "Kelola data sistem perpustakaan";
   <link rel="stylesheet" href="../../styles/categories/index.css">
 </head>
 <body>
-  <?php
-  $category = ["id" => 1, "name" => "Fiksi", "description" => "Novel dan cerita rekaan", "total_books" => 3];
-  ?>
   <div class="app-shell">
    <?php require_once '../../components/admin/sidebar.php'; ?>
    <?php require_once '../../components/admin/topbar.php'; ?>
-  
 
     <main class="app-main">
 
       <div class="app-content">
         <div class="toolbar">
-          <form method="" action="" class="toolbar-filters">
+          <form method="GET" action="" class="toolbar-filters">
             <div class="search-box">
               <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-              <input type="text" name="search" class="search-input" placeholder="Cari nama kategori...">
+              <input type="text" name="search" class="search-input" placeholder="Cari nama kategori..." value="<?= htmlspecialchars($search) ?>">
             </div>
             <button type="submit" class="btn btn-outline btn-sm">Cari</button>
           </form>
@@ -44,22 +52,27 @@ $pageSubtitle = "Kelola data sistem perpustakaan";
               </tr>
             </thead>
             <tbody>
+              <?php foreach ($categories as $category): ?>
               <tr>
                 <td>
                   <div class="cell-primary">
                     <span class="cell-thumb"><svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></span>
-                    <?= $category['name'] ?>
+                    <?= htmlspecialchars($category['name']) ?>
                   </div>
                 </td>
-                <td><?= $category['description'] ?></td>
+                <td><?= htmlspecialchars($category['description']) ?></td>
                 <td><span class="badge badge-muted"><?= $category['total_books'] ?> buku</span></td>
                 <td>
                   <div class="cell-actions">
                     <a href="edit.php?id=<?= $category['id'] ?>" class="btn btn-outline btn-sm">Edit</a>
-                    <a href="#" class="btn btn-danger btn-sm">Hapus</a>
+                    <a href="../../actions/categories/destroy.php?id=<?= $category['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus kategori ini?')">Hapus</a>
                   </div>
                 </td>
               </tr>
+              <?php endforeach; ?>
+              <?php if (empty($categories)): ?>
+              <tr><td colspan="4">Data kategori tidak ditemukan.</td></tr>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>
