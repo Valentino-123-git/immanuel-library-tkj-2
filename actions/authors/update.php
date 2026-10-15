@@ -1,31 +1,10 @@
 <?php
-session_start();
-require_once "../../config/database.php";
+if (isset($_POST['update']) && $_SERVER['REQUEST_METHOD'] === "POST") {
+    $id = $_POST['id'];
+    $name = $_POST['name'];
+    $bio = $_POST['bio'];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
-    $id   = $_POST['id'] ?? null;
-    $name = trim($_POST['name'] ?? '');
-    $bio  = trim($_POST['bio'] ?? '');
-
-    if (!$id || empty($name)) {
-        $_SESSION['error'] = "Data tidak valid atau nama kosong!";
-        header("Location: ../../pages/authors/edit.php?id=" . $id);
-        exit();
-    }
-
-    // Query update data
-    $stmt = $conn->prepare("UPDATE authors SET name = ?, bio = ? WHERE id = ?");
-    $stmt->bind_param("ssi", $name, $bio, $id);
-
-    if ($stmt->execute()) {
-        $_SESSION['success'] = "Data penulis berhasil diperbarui!";
-    } else {
-        $_SESSION['error'] = "Gagal memperbarui data: " . $conn->error;
-    }
-
-    $stmt->close();
+    print_r($_POST);
 }
 
-header("Location: ../../pages/authors/index.php");
-exit();
 ?>

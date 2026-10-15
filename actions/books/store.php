@@ -1,34 +1,50 @@
 <?php
-session_start();
-require_once "../../config/database.php";
+require_once __DIR__ . "/../../config/database.php";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
-    $title       = trim($_POST['title'] ?? '');
-    $author_ids  = $_POST['author_ids'] ?? [];   // form mengirim array (author_ids[])
-    $category_id = $_POST['category_id'] ?? null;
-    $stock       = (int) ($_POST['stock'] ?? 0);
+if (isset($_POST['store']) && $_SERVER['REQUEST_METHOD'] === "POST") {
+    try {
+        $pdo->beginTransaction();
 
-    if (empty($title) || empty($author_ids) || !$category_id) {
-        $_SESSION['error'] = "Judul, penulis, dan kategori wajib diisi!";
-        header("Location: ../../pages/books/create.php");
-        exit();
+        $title = htmlspecialchars($_POST['title']);
+        $isbn = htmlspecialchars($_POST['isbn']);
+        $year = htmlspecialchars($_POST['year']);
+        $stock = htmlspecialchars($_POST['stock']);
+        $description = htmlspecialchars($_POST['description']);
+        $categoryId = htmlspecialchars($_POST['category_id']);
+
+        $query = "insert into books (title, isbn, year, stock, description, category_id)
+                  values (:title, :isbn, :year, :stock, :description, :category_id)
+                 ";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([
+            'title' => $title,
+            'isbn' => $isbn,
+            'year' => $year,
+            'stock' => $stock,
+            'description' => $description,
+            'category_id' => $categoryId
+        ]);
+
+        $bookId = $pdo->lastInsertId();
+
+        $query = "insert into book_author (book_id, author_id) values (:book_id, :author_id)";
+        $stmt = $pdo->prepare($query);
+
+        $authorIds = $_POST['author_ids'];
+        foreach ($authorIds as $authorId) {
+            $stmt->execute([
+                'book_id' => $bookId,
+                'author_id' => htmlspecialchars($authorId)
+            ]);
+        }
+
+        $pdo->commit();
+
+        header('Location: ../../pages/books/index.php');
+        exit;
+    } catch (PDOException $e) {
+        $pdo->rollBack();
+        throw $e;
     }
-
-    // Kolom books.author_id hanya menyimpan satu penulis, jadi ambil penulis pertama
-    $author_id = (int) $author_ids[0];
-
-    $stmt = $conn->prepare("INSERT INTO books (title, author_id, category_id, stock) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("siii", $title, $author_id, $category_id, $stock);
-
-    if ($stmt->execute()) {
-        $_SESSION['success'] = "Buku berhasil ditambahkan!";
-    } else {
-        $_SESSION['error'] = "Gagal menyimpan buku: " . $conn->error;
-    }
-
-    $stmt->close();
 }
-
-header("Location: ../../pages/books/index.php");
-exit();
 ?>

@@ -1,33 +1,27 @@
 <?php
-require_once '../../repositories/user-repository.php';
+require_once __DIR__ . "/../../repositories/user-repository.php";
 
-if (session_status() === PHP_SESSION_NONE) {
-  session_start();
-}
+$user = getUser();
+$profile = getProfile();
 
 $pageTitle = "Profil Saya";
-$pageSubtitle = "Kelola data sistem perpustakaan";
-
-// Ambil data user yang sedang login (fallback ke user pertama jika id sesi tidak ada di repository)
-$userId  = $_SESSION['user_id'] ?? 1;
-$user    = getUser($userId) ?? getUsers()[0];
-$profile = getProfile($user['id']);
+$pageSubtitle = "Kelola data akun dan profil Anda";
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?php echo $pageTitle; ?> - Perpustakaan Digital</title>
+  <title>Profil Saya - Perpustakaan Digital</title>
   <link rel="stylesheet" href="../../styles/profile/edit.css">
 </head>
 <body>
   <div class="app-shell">
-   <?php require_once '../../components/admin/sidebar.php'; ?>
-   
+  <?php require_once __DIR__ . "/../../components/admin/sidebar.php" ?>
 
     <main class="app-main">
-      <?php require_once '../../components/admin/topbar.php'; ?>
+    <?php require_once __DIR__ . "/../../components/admin/topbar.php" ?>
 
       <div class="app-content">
         <form method="POST" action="../../actions/profile/update.php">
@@ -36,11 +30,11 @@ $profile = getProfile($user['id']);
             <div class="form-row">
               <div class="form-group">
                 <label for="name">Nama Lengkap</label>
-                <input type="text" id="name" name="name" value="<?= htmlspecialchars($user['name']) ?>">
+                <input type="text" id="name" name="name" value="<?= $user['name'] ?>">
               </div>
               <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="<?= htmlspecialchars($user['email']) ?>">
+                <input type="email" id="email" name="email" value="<?= $user['email'] ?>">
               </div>
             </div>
             <div class="form-group">
@@ -54,19 +48,19 @@ $profile = getProfile($user['id']);
             <div class="form-section-title">Data Profil</div>
             <div class="form-group">
               <label for="phone">Nomor Telepon</label>
-              <input type="text" id="phone" name="phone" value="<?= htmlspecialchars($profile['phone']) ?>">
+              <input type="text" id="phone" name="phone" value="<?= $profile['phone'] ?>">
             </div>
             <div class="form-group">
               <label for="address">Alamat</label>
-              <input type="text" id="address" name="address" value="<?= htmlspecialchars($profile['address']) ?>">
+              <input type="text" id="address" name="address" value="<?= $profile['address'] ?>">
             </div>
             <div class="form-group">
               <label for="bio">Bio Singkat</label>
-              <textarea id="bio" name="bio" rows="3"><?= htmlspecialchars($profile['bio']) ?></textarea>
+              <textarea id="bio" name="bio" rows="3"><?= $profile['bio'] ?></textarea>
             </div>
             <div class="form-actions">
-              <a href="../dashboard.php" class="btn btn-outline">Batal</a>
-              <button type="submit" name="submit" class="btn btn-primary">Simpan Perubahan</button>
+              <button type="button" class="btn btn-outline">Batal</button>
+              <button type="submit" name="update" class="btn btn-primary">Simpan Perubahan</button>
             </div>
           </div>
         </form>

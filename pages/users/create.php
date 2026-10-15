@@ -1,22 +1,22 @@
 <?php
 $pageTitle = "Tambah Pengguna";
-$pageSubtitle = "Kelola data sistem perpustakaan";
+$pageSubtitle = "Buat akun pengguna baru beserta perannya";
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?php echo $pageTitle; ?> - Perpustakaan Digital</title>
+  <title>Tambah Pengguna - Perpustakaan Digital</title>
   <link rel="stylesheet" href="../../styles/users/create.css">
 </head>
 <body>
   <div class="app-shell">
-   <?php require_once '../../components/admin/sidebar.php'; ?>
-   
-    <main class="app-main">
-      <?php require_once '../../components/admin/topbar.php'; ?>
+  <?php require_once __DIR__ . "/../../components/admin/sidebar.php" ?>
 
+    <main class="app-main">
+    <?php require_once __DIR__ . "/../../components/admin/topbar.php" ?>
 
       <div class="app-content">
         <form method="POST" action="../../actions/users/store.php">
@@ -48,7 +48,7 @@ $pageSubtitle = "Kelola data sistem perpustakaan";
 
             <div class="form-actions">
               <a href="index.php" class="btn btn-outline">Batal</a>
-              <button type="submit" name="submit" class="btn btn-primary">Simpan Pengguna</button>
+              <button type="submit" name="store" class="btn btn-primary">Simpan Pengguna</button>
             </div>
           </div>
         </form>

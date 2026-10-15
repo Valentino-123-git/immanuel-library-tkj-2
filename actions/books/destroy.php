@@ -1,24 +1,33 @@
 <?php
-session_start();
-require_once "../../config/database.php";
+require_once __DIR__ . "/../../config/database.php";
 
-$id = $_GET['id'] ?? null;
+if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === "GET") {
+    try {
+        $pdo->beginTransaction();
+        $id = htmlspecialchars($_GET['id']);
 
-if ($id) {
-    $stmt = $conn->prepare("DELETE FROM books WHERE id = ?");
-    $stmt->bind_param("i", $id);
+        // Delete relation data (Book Author)
+        $query = "delete from book_author where book_id = :book_id";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([
+            "book_id" => $id
+        ]);
 
-    if ($stmt->execute()) {
-        $_SESSION['success'] = "Buku berhasil dihapus!";
-    } else {
-        $_SESSION['error'] = "Gagal menghapus buku: " . $conn->error;
+        // Delete Book data
+        $query = "delete from books where id = :id";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([
+            "id" => $id
+        ]);
+
+        $pdo->commit();
+
+        header("Location: ../../pages/books/index.php");
+        exit;
+    } catch (PDOException $e) {
+        $pdo->rollBack();
+        throw $e;
     }
-
-    $stmt->close();
-} else {
-    $_SESSION['error'] = "ID buku tidak valid!";
 }
 
-header("Location: ../../pages/books/index.php");
-exit();
 ?>

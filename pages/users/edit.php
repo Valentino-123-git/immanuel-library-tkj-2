@@ -1,29 +1,26 @@
 <?php
-require_once '../../repositories/user-repository.php';
+require_once __DIR__ . "/../../repositories/user-repository.php";
+
+$user = getUser();
 
 $pageTitle = "Edit Pengguna";
-$pageSubtitle = "Kelola data sistem perpustakaan";
-
-$user = getUser($_GET['id'] ?? 0);
-if (!$user) {
-  header("Location: index.php");
-  exit();
-}
+$pageSubtitle = "Perbarui data dan role pengguna";
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?php echo $pageTitle; ?> - Perpustakaan Digital</title>
+  <title>Edit Pengguna - Perpustakaan Digital</title>
   <link rel="stylesheet" href="../../styles/users/edit.css">
 </head>
 <body>
   <div class="app-shell">
-   <?php require_once '../../components/admin/sidebar.php'; ?>
+  <?php require_once __DIR__ . "/../../components/admin/sidebar.php" ?>
 
     <main class="app-main">
-      <?php require_once '../../components/admin/topbar.php'; ?>
+    <?php require_once __DIR__ . "/../../components/admin/topbar.php" ?>
 
       <div class="app-content">
         <form method="POST" action="../../actions/users/update.php">
@@ -33,11 +30,11 @@ if (!$user) {
             <div class="form-row">
               <div class="form-group">
                 <label for="name">Nama Lengkap</label>
-                <input type="text" id="name" name="name" value="<?= htmlspecialchars($user['name']) ?>">
+                <input type="text" id="name" name="name" value="<?= $user['name'] ?>">
               </div>
               <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="<?= htmlspecialchars($user['email']) ?>">
+                <input type="email" id="email" name="email" value="<?= $user['email'] ?>">
               </div>
             </div>
             <div class="form-group">
@@ -50,7 +47,7 @@ if (!$user) {
 
             <div class="form-actions">
               <a href="index.php" class="btn btn-outline">Batal</a>
-              <button type="submit" name="submit" class="btn btn-primary">Simpan Perubahan</button>
+              <button type="submit" name="update" class="btn btn-primary">Simpan Perubahan</button>
             </div>
           </div>
         </form>

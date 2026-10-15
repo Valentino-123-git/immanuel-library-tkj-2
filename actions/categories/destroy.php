@@ -1,24 +1,8 @@
 <?php
-session_start();
-require_once "../../config/database.php";
+if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === "GET") {
+    $id = $_GET['id'];
 
-$id = $_GET['id'] ?? null;
-
-if ($id) {
-    $stmt = $conn->prepare("DELETE FROM categories WHERE id = ?");
-    $stmt->bind_param("i", $id);
-
-    if ($stmt->execute()) {
-        $_SESSION['success'] = "Kategori berhasil dihapus!";
-    } else {
-        $_SESSION['error'] = "Gagal menghapus kategori: " . $conn->error;
-    }
-
-    $stmt->close();
-} else {
-    $_SESSION['error'] = "ID kategori tidak valid!";
+    echo "Kategori dengan id " . htmlspecialchars($id) . " berhasil dihapus.";
 }
 
-header("Location: ../../pages/categories/index.php");
-exit();
 ?>

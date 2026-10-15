@@ -1,31 +1,22 @@
 <?php
-session_start();
+$title = "Beranda - Immanuel Library";
 
-// Jika pengguna SUDAH login, langsung arahkan ke Dashboard
-if (isset($_SESSION['is_login']) && $_SESSION['is_login'] === true) {
-    header("Location: pages/dashboard.php");
-    exit();
-}
-
-$title = "Beranda - Perpustakaan Immanuel1";
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
- 
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>
     <?= $title ?>
-
   </title>
   <link rel="stylesheet" href="styles/index.css">
 </head>
 
 <body>
-  
-  <?php require_once './components/landing/header.php' ?>
+  <?php require_once __DIR__ . "/components/landing/header.php" ?>
 
   <!-- ============ HERO ============ -->
   <section class="hero">
@@ -112,9 +103,7 @@ $title = "Beranda - Perpustakaan Immanuel1";
       </div>
     </div>
   </section>
-  
-  <?php require_once './components/landing/footer.php'; ?>
-
+  <?php require_once __DIR__ . "/components/landing/footer.php" ?>
 </body>
 
 </html>
