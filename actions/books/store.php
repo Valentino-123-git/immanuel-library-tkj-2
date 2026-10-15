@@ -8,7 +8,7 @@ if (isset($_POST['store']) && $_SERVER['REQUEST_METHOD'] === "POST") {
         $title = htmlspecialchars($_POST['title']);
         $isbn = htmlspecialchars($_POST['isbn']);
         $year = htmlspecialchars($_POST['year']);
-        $stock = htmlspecialchars($_POST['stock']);
+        $stock = (int)$_POST['stock']; // <--- PERUBAHAN DI SINI (ditambah (int))
         $description = htmlspecialchars($_POST['description']);
         $categoryId = htmlspecialchars($_POST['category_id']);
 
