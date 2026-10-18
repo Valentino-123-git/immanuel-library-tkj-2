@@ -1,25 +1,40 @@
-CATATAN REFLEKSI - LANDING PAGE IMMANUEL LIBRARY
+Kesulitan Saya Waktu Belajar PHP dan MySQL (Proyek immanuel-library)
 
-1. Apa keuntungan memisahkan header dan footer menjadi file component tersendiri,
-   dibandingkan menuliskannya langsung berulang-ulang di index.php?
 
-   Dengan memisahkan header dan footer ke components/landing/header.php dan
-   components/landing/footer.php, markup yang sama cukup ditulis satu kali lalu
-   disertakan ke halaman mana pun dengan require_once. Jika ada perubahan, misalnya
-   menambah menu navigasi atau mengganti teks hak cipta, cukup mengubah satu file dan
-   seluruh halaman yang memakainya ikut berubah. Hal ini mengurangi risiko tampilan
-   tidak konsisten karena lupa mengubah salah satu salinan. File index.php juga menjadi
-   lebih pendek dan fokus pada isi halaman (hero, statistik, fitur), sehingga lebih mudah
-   dibaca dan dirawat.
+1. Error waktu simpan buku (Create Data)
 
-2. Bagian mana pada halaman-halaman admin (Buku, Kategori, Penulis, Pengguna, Profil)
-   yang mengalami masalah yang sama seperti header/footer sebelum dipisah?
+Waktu saya klik Simpan Buku di halaman Tambah Buku, muncul error ini:
 
-   Bagian sidebar (elemen <aside> berisi menu Beranda, Buku, Kategori, Penulis, Pengguna,
-   dan Profil Saya) dan topbar (elemen <header> berisi judul halaman serta info pengguna)
-   ditulis ulang secara identik di 14 file halaman admin. Akibatnya, jika satu menu
-   sidebar diubah atau ditambah, kita harus mengedit 14 file satu per satu dan mudah ada
-   yang terlewat. Topbar juga hanya berbeda pada judul dan subjudulnya, sehingga lebih
-   tepat dijadikan satu component yang menerima variabel $pageTitle dan $pageSubtitle.
-   Selain itu, data pada halaman admin masih ditulis sebagai array mentah di tiap file,
-   bukan diambil dari satu sumber (repository function).
+Fatal error: Uncaught PDOException: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: '' for column 'stock' at row 1 in D:\laragon\www\immanuel-library\actions\books\store.php:19
+
+Padahal kodenya sudah saya samakan sama yang di video guru, tapi tetap error. Saya bingung salahnya di mana. Errornya nunjuk ke baris 19 di store.php, jadi saya kira kodenya yang salah.
+
+
+2. Baca pesan error
+
+Pesan errornya panjang dan banyak istilah yang saya belum ngerti, seperti SQLSTATE sama Stack trace. Saya jadi bingung bagian mana yang harus dilihat dulu.
+
+
+3. Samain kode sama video guru
+
+Di video kodenya diketik pelan-pelan, jadi saya susah mastiin bentuk akhir tiap file kayak gimana. Pas error, saya juga susah mastiin kode saya udah bener-bener sama atau belum.
+
+
+4. Transaksi (beginTransaction, commit, rollBack)
+
+Saya masih bingung kapan data itu benar-benar tersimpan dan kapan dibatalkan. Saya juga belum ngerti kenapa simpan ke tabel books dan book_author harus dijadikan satu transaksi.
+
+
+5. Simpan penulis buku
+
+Saya bingung gimana ID buku yang baru disimpan (lastInsertId) dipakai buat nyimpan penulisnya ke tabel book_author. Saya juga bingung kenapa nama checkbox-nya author_ids[] dan dikirim sebagai array.
+
+
+6. Penulis yang sudah tercentang di halaman Edit
+
+Saya susah ngerti array_column sama in_array. Saya juga bingung alur datanya dari database sampai muncul jadi checkbox yang sudah tercentang.
+
+
+7. Proses update di update.php
+
+Saya bingung kenapa penulis yang lama dihapus semua dulu terus dimasukkan lagi. Saya juga agak susah ngikutin urutan tiga prosesnya (update books, hapus book_author, insert book_author) yang ada dalam satu file.
