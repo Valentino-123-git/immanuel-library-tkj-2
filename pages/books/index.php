@@ -15,6 +15,10 @@ if (!ctype_digit((string) $categoryId)) {
 
 $page = max(1, (int) ($_GET['page'] ?? 1));
 
+$totalBooks = countBooks($search, $categoryId);
+$totalPages = max(1, (int) ceil($totalBooks / $perPage));
+$page = min($page, $totalPages);
+
 $categories = getCategories();
 $books = getBooks($search, $categoryId, $page, $perPage);
 
@@ -121,7 +125,7 @@ $pageSubtitle = "Kelola data buku, kategori, dan penulis";
             <span class="pagination-btn is-disabled">&lt;</span>
           <?php endif ?>
 
-          <?php if ($page): ?>
+          <?php if ($page < $totalPages): ?>
             <a href="?<?= http_build_query(['search' => $search, 'category' => $categoryId, 'page' => $page + 1]) ?>"
               class="pagination-btn">&gt;</a>
           <?php else: ?>

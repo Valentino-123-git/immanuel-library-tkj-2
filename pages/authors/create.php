@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../../middleware/auth.php";
+requireAuth();
+
 $pageTitle = "Tambah Penulis";
 $pageSubtitle = "Daftarkan penulis baru ke sistem";
 ?>

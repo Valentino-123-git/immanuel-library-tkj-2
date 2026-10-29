@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../../middleware/auth.php";
+requireAuth();
+
 require_once __DIR__ . "/../../repositories/book-repository.php";
 
 $book = getBook();

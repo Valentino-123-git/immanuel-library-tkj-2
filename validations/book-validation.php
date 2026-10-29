@@ -2,86 +2,125 @@
 require_once __DIR__ . "/../repositories/book-repository.php";
 require_once __DIR__ . "/../repositories/category-repository.php";
 require_once __DIR__ . "/../repositories/author-repository.php";
+
+// Membersihkan satu nilai input: buang spasi di tepi dan escape karakter HTML.
+function cleanInput($value)
+{
+    return trim(htmlspecialchars($value ?? ''));
+}
+
 function getBookRequest($request)
 {
     return [
-        'id' => trim(htmlspecialchars($request['id'])),
-        'title' => trim(htmlspecialchars($request['title'])),
-        'isbn' => trim(htmlspecialchars($request['isbn'])),
-        'year' => trim(htmlspecialchars($request['year'])),
-        'stock' => trim(htmlspecialchars($request['stock'])),
-        'description' => trim(htmlspecialchars($request['description'])),
-        'category_id' => trim(htmlspecialchars($request['category_id'])),
+        'id' => cleanInput($request['id'] ?? ''),
+        'title' => cleanInput($request['title'] ?? ''),
+        'isbn' => cleanInput($request['isbn'] ?? ''),
+        'year' => cleanInput($request['year'] ?? ''),
+        'stock' => cleanInput($request['stock'] ?? ''),
+        'description' => cleanInput($request['description'] ?? ''),
+        'category_id' => cleanInput($request['category_id'] ?? ''),
         'author_ids' => $request['author_ids'] ?? [],
     ];
 }
-function validateBook($request, $ignoreBookId = 0)
+
+// Setiap fungsi validasi mengembalikan pesan error, atau null jika data valid.
+
+function validateTitle($title)
 {
-    $errors = [];
+    if ($title === '') {
+        return "Judul buku wajib diisi";
+    }
+    if (mb_strlen($title) > 100) {
+        return "Judul buku tidak boleh melebihi dari 100 karakter";
+    }
+    return null;
+}
 
-    // Validate title: required and max 100 character
-    if ($request['title'] === '') {
-        $errors['title'] = "Judul buku wajib diisi";
-    } elseif (mb_strlen($request['title']) > 100) {
-        $errors['title'] = "Judul buku tidak bole melebihi dari 100 karakter";
+function validateIsbn($isbn, $ignoreBookId)
+{
+    if ($isbn === '') {
+        return "ISBN wajib diisi";
+    }
+    if (isIsbnTaken($isbn, $ignoreBookId)) {
+        return "ISBN sudah terdaftar sebelumnya";
+    }
+    return null;
+}
+
+function validateYear($year)
+{
+    if ($year === '') {
+        return "Tahun terbit wajib diisi";
+    }
+    if (filter_var($year, FILTER_VALIDATE_INT) === false) {
+        return "Tahun terbit wajib diisi dengan angka";
+    }
+    if ((int) $year < 1000 || (int) $year > (int) date('Y')) {
+        return "Tahun terbit tidak valid";
+    }
+    return null;
+}
+
+function validateStock($stock)
+{
+    if ($stock === '') {
+        return "Stok wajib diisi";
+    }
+    if (filter_var($stock, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]) === false) {
+        return "Stok wajib diisi dengan angka 0 atau lebih";
+    }
+    return null;
+}
+
+function validateCategory($categoryId)
+{
+    if ($categoryId === '') {
+        return "Kategori wajib dipilih";
+    }
+    if (!isCategoryExists($categoryId)) {
+        return "Kategori yang dipilih tidak valid";
+    }
+    return null;
+}
+
+function validateDescription($description)
+{
+    if ($description === '') {
+        return "Deskripsi buku wajib diisi";
+    }
+    if (mb_strlen($description) > 100) {
+        return "Deskripsi buku tidak boleh melebihi dari 100 karakter";
+    }
+    return null;
+}
+
+function validateAuthors($authorIds)
+{
+    if (count($authorIds) < 1) {
+        return "Penulis buku wajib dipilih";
     }
 
-     // Validate isbn: required, isTaken?
-    if ($request['isbn'] === '') {
-        $errors['isbn'] = "ISBN wajib diisi";
-    } elseif (isIsbnTaken($request['isbn'], $ignoreBookId)) {
-        $errors['isbn'] = "ISBN sudah terdaftar sebelumnya";
-    }
-
-
-   // Validate year: required, isNumber
-    if ($request['year'] == '') {
-    $errors['year'] = "Tahun terbit wajib diisi";
-    } elseif (!is_int(intval($request['year']))) {
-    $errors['year'] = "Tahun terbit wajib diisi dengan angka";
-    }
-
-    // Validate year: required, isNumber
-    if ($request['stock'] === '') {
-    $errors['stock'] = "Stok wajib diisi";
-    } elseif (!is_int(intval($request['stock']))) {
-    $errors['stock'] = "Stock wajib diisi dengan angka";
-    }
-
-    // Validate category: required, isExists
-    if ($request['category_id'] === '') {
-    $errors['category_id'] = "Kategori wajib dipilih";
-    } elseif (!isCategoryExists($request['category_id'])) {
-    $errors['category_id'] = "Kategori yang dipili tidak valid";
-    }
-
-    // Validate description: required, max 200 character
-    if ($request['description'] === '') {
-        $errors['description'] = "Deskripsi buku wajib diisi";
-    } elseif (mb_strlen($request['description']) > 100) {
-        $errors['description'] = "Deskripsi buku tidak bole melebihi dari 100 karakter";
-    }
-
-
-    // Validate Authors: required, isExists
-
-    if (count($request['author_ids']) < 1) {
-    $errors['author_ids'] = "Penulis buku wajib dipilih";
-    } else {
-    $authors = getAuthors();
-    $validAuthorIds = array_column($authors, 'id');
-    foreach ($request['author_ids'] as $authorId) {
+    $validAuthorIds = array_column(getAuthors(), 'id');
+    foreach ($authorIds as $authorId) {
         if (!in_array($authorId, $validAuthorIds)) {
-            $errors['author_ids'] = "Ada Penulis buku yang dipilih tidak valid";
+            return "Ada Penulis buku yang dipilih tidak valid";
         }
     }
+    return null;
 }
 
+function validateBook($request, $ignoreBookId = 0)
+{
+    $checks = [
+        'title' => validateTitle($request['title']),
+        'isbn' => validateIsbn($request['isbn'], $ignoreBookId),
+        'year' => validateYear($request['year']),
+        'stock' => validateStock($request['stock']),
+        'category_id' => validateCategory($request['category_id']),
+        'description' => validateDescription($request['description']),
+        'author_ids' => validateAuthors($request['author_ids']),
+    ];
 
-
-    return $errors;
-
-     
+    // Simpan hanya field yang punya pesan error.
+    return array_filter($checks, fn($message) => $message !== null);
 }
-
-?>

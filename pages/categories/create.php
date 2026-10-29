@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../../middleware/auth.php";
+requireAuth();
+
 $pageTitle = "Tambah Kategori";
 $pageSubtitle = "Buat kategori baru untuk mengelompokkan buku";
 ?>

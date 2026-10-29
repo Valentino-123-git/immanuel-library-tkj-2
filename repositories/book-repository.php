@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . "/../config/database.php";
 
-function countBooks($search, $categoryId, $currentPage, $perPage)
+function countBooks($search, $categoryId)
 {
   global $pdo;
 
@@ -41,17 +41,22 @@ function getBooks($search, $categoryId, $page, $perPage)
 
   $books = $stmt->fetchAll();
 
-  $query = "select ba.book_id, a.name from book_author ba
-            left join authors a on ba.author_id = a.id
-           ";
-  $stmt = $pdo->prepare($query);
-  $stmt->execute();
-
-  $bookAuthors = $stmt->fetchAll();
-
+  // Ambil penulis hanya untuk buku yang tampil di halaman ini.
   $bookByAuthors = [];
-  foreach ($bookAuthors as $bookAuthor) {
-    $bookByAuthors[$bookAuthor['book_id']][] = $bookAuthor['name'];
+  if (!empty($books)) {
+    $bookIds = array_column($books, 'id');
+    $placeholders = implode(',', array_fill(0, count($bookIds), '?'));
+
+    $query = "select ba.book_id, a.name from book_author ba
+              left join authors a on ba.author_id = a.id
+              where ba.book_id in ($placeholders)
+             ";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute($bookIds);
+
+    foreach ($stmt->fetchAll() as $bookAuthor) {
+      $bookByAuthors[$bookAuthor['book_id']][] = $bookAuthor['name'];
+    }
   }
 
   foreach ($books as $index => $book) {
@@ -100,7 +105,7 @@ function isIsbnTaken($isbn, $ignoreBookId)
 
   $bookId = intval($ignoreBookId);
 
-  $query = "select count(id) from books where isbn = :isbn && id != :book_id";
+  $query = "select count(id) from books where isbn = :isbn and id != :book_id";
 
   $stmt = $pdo->prepare($query);
   $stmt->execute([
